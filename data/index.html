@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontrola Diody</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    .grid-container {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+      grid-template-columns: 1fr 1fr; /* Two columns */
+      grid-template-rows: repeat(4, auto); /* Four rows */
+      max-width: 800px; /* Maximum width of the grid container */
+      margin-left: auto; /* Center horizontally */
+      margin-right: auto; /* Center horizontally */
+    }
+    .grid-item {
+      display: flex;
+      align-items: center; /* Center items vertically */
+      justify-content: center; /* Center items horizontally */
+      max-width: 200px; /* Maximum width of each item */
+      margin: 0 auto; /* Center items within the grid cell */
+    }
+    input {
+      width: 100%;
+      max-width: 180px; /* Maximum width of input fields */
+      padding: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h2>Kontrola Diody</h2>
+  <button onclick="turnOn()">Włącz diodę</button>
+  <button onclick="turnOff()">Wyłącz diodę</button>
+  
+  <h2>Kontrola wilgotności</h2>
+  <div class="grid-container">
+    <div class="grid-item"><input type="text" id="plant1" placeholder="Roślina 1"></div>
+    <div class="grid-item" id="sensor1_value">--%</div>
+    <div class="grid-item"><input type="text" id="plant2" placeholder="Roślina 2"></div>
+    <div class="grid-item" id="sensor2_value">--%</div>
+    <div class="grid-item"><input type="text" id="plant3" placeholder="Roślina 3"></div>
+    <div class="grid-item" id="sensor3_value">--%</div>
+    <div class="grid-item"><input type="text" id="plant4" placeholder="Roślina 4"></div>
+    <div class="grid-item" id="sensor4_value">--%</div>
+  </div>
+
+  <button onclick="savePlantsNames()">Zapisz rośliny</button>
+
+  <script>
+    let currentSensor = 1;
+
+    function turnOn() {
+      fetch('/on')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);
+        });
+    }
+
+    function turnOff() {
+      fetch('/off')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);
+        });
+    }
+
+    function savePlantsNames() {
+      const plantsNames = {
+        plant1: document.getElementById('plant1').value,
+        plant2: document.getElementById('plant2').value,
+        plant3: document.getElementById('plant3').value,
+        plant4: document.getElementById('plant4').value
+      };
+
+      fetch('/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(plantsNames)
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log('Saved:', data);
+      });
+    }
+
+    function loadPlantsNames() {
+      fetch('/load')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('plant1').value = data.plant1 || '';
+          document.getElementById('plant2').value = data.plant2 || '';
+          document.getElementById('plant3').value = data.plant3 || '';
+          document.getElementById('plant4').value = data.plant4 || '';
+        });
+    }
+
+    function updateMoistureValues() {
+      let sensorUrl = `/sensor${currentSensor}`;
+      let sensorLabel = `sensor${currentSensor}_value`;
+
+      fetch(sensorUrl)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById(sensorLabel).innerText = data + "%";
+          // Move to the next sensor
+          currentSensor++;
+          if (currentSensor > 4) {
+            currentSensor = 1; // Reset to the first sensor
+          }
+        });
+    }
+
+    setInterval(updateMoistureValues, 1000);
+
+    window.onload = function() {
+      loadPlantsNames();
+      updateMoistureValues();
+    };
+  </script>
+</body>
+</html>
