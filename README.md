@@ -3,7 +3,7 @@ This is a small prototyping project aimed at measuring soil moisture levels usin
 
 ## Hardware requirements
 - NodeMCU V3 (or any board with ESP8266 module)
-- Soil Moisture Sensors (4)
+- Soil Moisture Sensors (HW-103 detector + probe) (4)
 - Silicon Diodes (1N4148 or similar) (4)
 - Wires for connections
 - Breadboard
