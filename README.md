@@ -16,6 +16,9 @@ This is a small prototyping project aimed at measuring soil moisture levels usin
   - ESP8266WebServer
   - FS
 
+## Connections
+<img src="https://github.com/user-attachments/assets/c4f823a0-0868-4cd1-8d39-b63226c4e12c" alt="connections" width="600"/>
+
 ## Installation
 1. Clone the repository into a desired folder on your system:
    ```bash
@@ -45,7 +48,7 @@ Sensor pins are defined in config.h. Modify this file if you use different pins.
 5. **Manage Plant Names:**
     - Save and load plant names through the provided interface for better management of your plants.
 6. **Timeout**
-    - Few seconds after closing a web page all sensors will be turned off.
+    - Few seconds after closing the web page all sensors will be turned off.
 
 ## Acknowledgments
 - Inspiration from various soil moisture measurement projects and tutorials available online.
